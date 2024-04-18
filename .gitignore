@@ -1,0 +1,42 @@
+# General Node modules (covers all subprojects)
+**/node_modules/
+
+# Environment files for any project
+**/.env
+
+# Compiled JavaScript output for any TypeScript project
+**/dist/
+**/build/
+**/out/
+
+# Logs across all projects
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# Editor directories and files for various editors
+**/.vscode/
+**/.idea/
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.swp
+**/*.cache
+**/*.sublime-project
+**/*.sublime-workspace
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Optional: Exclude specific files or folders that are common across projects
+# **/config/local.json
+
+# Other common directories specific to types of projects
+# For example, if using Babel
+**/lib/
+
+# If using logs in a specific folder
+**/logs/
