@@ -47,6 +47,7 @@ const youBeat: Record<YourMove, OpponentMove> = {
   [YourMove.Scissors]: OpponentMove.Paper,
 };
 
+// PART 1
 async function calculateTotalScore(filePath: string): Promise<void> {
   const fileStream = fs.createReadStream(filePath);
   const rl = readline.createInterface({
@@ -76,7 +77,67 @@ async function calculateTotalScore(filePath: string): Promise<void> {
 
   rl.close();
 
-  console.log(`Total score following the strategy guide is: ${totalScore}`);
+  console.log(`Total score for Part 1: ${totalScore}`);
+}
+
+// PART 2
+enum ExpectedOutcome {
+  Lose = "X",
+  Draw = "Y",
+  Win = "Z",
+}
+
+// Dictionary to convert ExpectedOutcome to Outcome
+const convertOutcome = {
+  [ExpectedOutcome.Win]: Outcome.Win,
+  [ExpectedOutcome.Draw]: Outcome.Draw,
+  [ExpectedOutcome.Lose]: Outcome.Lose,
+};
+
+const outcomeToMove: Record<OpponentMove, Record<ExpectedOutcome, YourMove>> = {
+  [OpponentMove.Rock]: {
+    [ExpectedOutcome.Lose]: YourMove.Scissors,
+    [ExpectedOutcome.Draw]: YourMove.Rock,
+    [ExpectedOutcome.Win]: YourMove.Paper,
+  },
+  [OpponentMove.Paper]: {
+    [ExpectedOutcome.Lose]: YourMove.Rock,
+    [ExpectedOutcome.Draw]: YourMove.Paper,
+    [ExpectedOutcome.Win]: YourMove.Scissors,
+  },
+  [OpponentMove.Scissors]: {
+    [ExpectedOutcome.Lose]: YourMove.Paper,
+    [ExpectedOutcome.Draw]: YourMove.Scissors,
+    [ExpectedOutcome.Win]: YourMove.Rock,
+  },
+};
+
+async function calculateTotalScoreWithOutcome(filePath: string): Promise<void> {
+  const fileStream = fs.createReadStream(filePath);
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity,
+  });
+
+  let totalScore = 0;
+
+  for await (const line of rl) {
+    const [opponentMoveChar, expectedOutcomeChar] = line.trim().split(" ");
+    const opponentMove = opponentMoveChar as OpponentMove;
+    const expectedOutcome = expectedOutcomeChar as ExpectedOutcome;
+
+    const yourMove = outcomeToMove[opponentMove][expectedOutcome];
+    const moveScore = moveScores[yourMove];
+
+    const outcomeScore = outcomeScores[convertOutcome[expectedOutcome]];
+
+    totalScore += moveScore + outcomeScore;
+  }
+
+  rl.close();
+
+  console.log(`Total score for Part 2: ${totalScore}`);
 }
 
 calculateTotalScore("./src/input.txt").catch(console.error);
+calculateTotalScoreWithOutcome("./src/input.txt").catch(console.error);
