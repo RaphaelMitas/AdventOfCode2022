@@ -10,6 +10,7 @@ function calculatePriority(item: string): number {
   return 0;
 }
 
+// PART 1
 function processRucksacks(filePath: string): void {
   const reader = readline.createInterface({
     input: fs.createReadStream(filePath),
@@ -37,4 +38,34 @@ function processRucksacks(filePath: string): void {
   });
 }
 
-processRucksacks("./src/input.txt");
+// PART 2
+function processGroups(filePath: string): void {
+  const reader = readline.createInterface({
+    input: fs.createReadStream(filePath),
+    crlfDelay: Infinity,
+  });
+
+  let lines: string[] = [];
+  let totalPrioritySum = 0;
+
+  reader.on("line", (line: string) => {
+    lines.push(line);
+    if (lines.length === 3) {
+      const itemSets = lines.map((line) => new Set(line.split("")));
+      const commonItems = [...itemSets[0]].filter(
+        (item) => itemSets[1].has(item) && itemSets[2].has(item)
+      );
+
+      for (const item of commonItems) {
+        totalPrioritySum += calculatePriority(item);
+      }
+      lines = [];
+    }
+  });
+
+  reader.on("close", () => {
+    console.log(`Total priority sum: ${totalPrioritySum}`);
+  });
+}
+
+processGroups("./src/input.txt");
